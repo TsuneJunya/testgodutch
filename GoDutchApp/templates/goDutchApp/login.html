@@ -1,0 +1,111 @@
+<!-- expense_regist.html -->
+{% extends 'goDutchApp/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- Include Custom CSS -->
+    <style>
+        body {
+            background-color: #FFCA98;
+            /* Yellow-green background color */
+            font-family: 'Arial', sans-serif;
+            /* Specify a fallback font */
+            max-width: 500px;
+            text-align: center;
+            margin: auto;
+        }
+
+        .appName {
+            text-align: center;
+            margin: 100px 0 0 0;
+        }
+
+        .appName p {
+            font-family: 'Hiragino Sans', 'ヒラギノ角ゴシック';
+            font-weight: 900;
+            font-size: 45px;
+            padding: 0;
+            margin: 0;
+        }
+
+        .appName small {
+            display: block;
+        }
+
+        .login-container {
+            max-width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            /* White background color */
+            margin-top: 50px;
+            padding-bottom: 50px;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            /* Dark text color */
+        }
+
+        .login-container input {
+            height: 30px;
+            width: 70%;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-btn {
+            width: 100%;
+            text-align: center;
+            height: 40px;
+            background-color: #FFA958;
+        }
+
+        /* Responsive styles for small screens */
+        @media only screen and (max-width: 600px) {
+            .login-container {
+                max-width: 90%;
+                margin-top: 20px;
+                margin-bottom: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="appName">
+        <p class="navbar-brand">GoDutch</p>
+        <small>〜〜支払記録・割り勘精算〜〜</small>
+    </div>
+
+    <div class="container login-container">
+        <h2>ログイン画面</h2>
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" class="btn btn-primary login-btn"><i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;ログイン</button>
+        </form>
+    </div>
+
+    <!-- Include Bootstrap JS (optional, only if you need Bootstrap JavaScript features) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-dpNbvlhaeLy9szmQHU8HrZGzmYH9tmvAFq/nJpD9p04x4tPW4DIpGqLb95z9hA7z"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+Wy2ibbA58bW4Yjz17dydzW"></script>
+
+</body>
+
+</html>

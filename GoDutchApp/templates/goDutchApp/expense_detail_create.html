@@ -1,0 +1,141 @@
+<!-- expense_detail_create.html -->
+{% extends 'goDutchApp/base.html' %}
+{% block content %}
+{% load humanize %}
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/expense_detail_style.css' %}">
+
+  <div class="container mb-2">
+      <div style="text-align:center;">
+          <h2 class="mt-1 title"></i>{{ title }}</h2>
+      </div>
+
+      <form method="post" class="expense-form" id="expense-form">
+        {% csrf_token %}
+        <div id="error-container" class="text-danger"></div> <!-- エラーメッセージを表示するコンテナ -->
+        
+        <!-- payment_on フィールド -->
+        <label for="id_payment_on" class="required-label">支払日</label>
+        <input type="date" name="payment_on" value="{{ form.payment_on.value|date:'Y-m-d' }}" class="required-field" required id="id_payment_on">
+        
+        <!-- payment_amount フィールド -->
+        <label for="id_payment_amount" class="required-label">支払金額</label>
+        <input type="text" name="payment_amount" value="{{ form.payment_amount.value|intcomma }}" class="required-field" maxlength=7 required id="id_payment_amount" onchange="parseAndFormatNumber(this,false)">
+
+        <!-- payer フィールド -->
+        <label for="id_payer" class="required-label">支払者<span style="font-size:12px;">(割り勘要員から選択)</span></label>
+        <select name="payer" class="required-field" required id="id_payer">
+            <option value="">---------</option>
+            {% for burden_user in burden_user_info %}
+                <option value="{{ burden_user.id }}" {% if burden_user.id == form.payer.value %}selected{% endif %}>
+                    {{ burden_user.username }}
+                </option>
+            {% endfor %}
+        </select>
+        
+        <!-- category フィールド -->
+        <label for="id_category" class="required-label">商品種別</label>
+        <select name="category" class="required-field" required id="id_category">
+            {% for choice in form.fields.category.choices %}
+                <option value="{{ choice.0 }}" {% if choice.0 == form.category.value %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+        
+        <!-- payee フィールド -->
+        <label for="id_payee">支払先</label>
+        <input type="text" name="payee" value="{{ form.payee.value|default:'' }}" maxlength="20" id="id_payee">
+        
+        <!-- payment_method フィールド -->
+        <label for="id_payment_method">支払方法</label>
+        <select name="payment_method" id="id_payment_method">
+            {% for choice in form.fields.payment_method.choices %}
+                <option value="{{ choice.0 }}" {% if choice.0 == form.payment_method.value %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+        
+        <!-- memo フィールド -->
+        <label for="id_memo">メモ</label>
+        <input type="text" name="memo" value="{{ form.memo.value|default:'' }}" maxlength="20" id="id_memo">
+        
+        <!-- 保存ボタン -->
+        <button class="btn btn-success" id="registerDetailButton" style="width: 100%;">保存</button>
+        
+        <div class="col-md-12 mt-1" id="backButton">
+            <a class="btn btn-secondary" style="width: 100%;">戻る</a>
+        </div>
+
+        <!-- 削除ボタン（更新時のみ表示） -->
+        {% if detail_id %}
+            <!-- 削除ボタン -->
+            <button class="btn btn-danger mt-5" id="deleteDetailButton" style="width: 100%;" data-delete-url="{% url 'delete_expense_detail' expense_id=expense_instance.expense_id detail_id=detail_id %}">削除</button>
+        {% endif %}   
+    </form>
+    
+  </div>
+
+  <!-- 「保存」確認用モーダル -->
+  <div class="modal fade" id="saveConfirmationModal" tabindex="-1" aria-labelledby="saveConfirmationModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="saveConfirmationModalLabel">保存確認</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  保存してもよろしいですか？
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-success" id="confirmSaveButton">保存</button>
+                  <button type="button" class="btn btn-secondary" id="cancelSaveButton" data-bs-dismiss="modal">キャンセル</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- 「戻る」確認用モーダル -->
+  <div class="modal fade" id="backConfirmationModal" tabindex="-1" aria-labelledby="backConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="backConfirmationModalLabel">戻る確認</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                一覧に戻ってもよろしいですか？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="confirmBackButton">戻る</button>
+                <button type="button" class="btn btn-secondary" id="cancelBackButton" data-bs-dismiss="modal">キャンセル</button>
+            </div>
+        </div>
+    </div>
+   </div>
+
+  <!-- 「削除」確認用モーダル -->
+  <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="deleteConfirmationModalLabel">削除確認</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  削除してもよろしいですか？
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" id="confirmDeleteButton">削除</button>
+                  <button type="button" class="btn btn-secondary" id="cancelDeleteButton" data-bs-dismiss="modal">キャンセル</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <script>
+    const expenseDetailListUrl = "{% url 'expense_detail_list' expense_instance.expense_id %}";    
+  </script>
+  <!-- JavaScript ファイルを外部から読み込む -->
+  <script src="{% static 'js/expense_detail.js' %}"></script>
+
+
+
+{% endblock %}

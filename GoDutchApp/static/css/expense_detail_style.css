@@ -1,0 +1,73 @@
+/* static/css/expense_detail_style.css */
+.required-label::before {
+    content: '*';
+    color: red;
+    margin-right: 3px;  /* 星印とテキストの間に少しスペースを開ける */
+}
+
+
+/* 表示が必要な場合、<label>を赤字にするスタイルも追加 */
+.label-required {
+    color: red;
+}
+
+.title {
+    font-family: "Hiragino Sans","ヒラギノ角ゴシック";
+    font-weight: 900;
+}
+
+.expense-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.expense-form label {
+    display: block;
+    font-weight: bold;
+}
+
+.expense-form input,
+.expense-form select,
+.expense-form textarea {
+    width: 100%;
+    padding: 8px; /* 調整 */
+    margin-bottom: 8px; /* 調整 */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.expense-form p {
+    margin-bottom: 0;
+}
+
+.btn {
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-success{
+    background-color: #4CAF50;
+}
+
+.btn-back{
+    background-color: #6c757d;
+}
+
+
+select, input[type="date"], input[type="text"] {
+    background-color: white; /* 選択方式の項目を白くする */
+    color: black; /* テキストの色を黒にする（必要に応じて調整） */
+    border: 1px solid #ced4da; /* ボーダーの色を調整 */
+    border-radius: 4px; /* ボーダーの角を丸くする */
+    padding: 5px; /* 余白を調整 */
+    margin-bottom: 10px; /* 項目ごとのマージンを調整 */
+  }

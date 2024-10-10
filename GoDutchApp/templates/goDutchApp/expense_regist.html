@@ -1,0 +1,150 @@
+<!-- expense_regist.html -->
+{% extends 'goDutchApp/base.html' %}
+
+{% block content %}
+  {% load static %} 
+  <form id="expenseForm">
+    {% csrf_token %}
+    <div class="container text-center">
+      <div class="row mt-2">
+        <div class="col-md-12">
+          <h2><i class="fa-regular fa-pen-to-square"></i>&nbsp;経費タイトル</h2>
+        </div>
+        <div class="col-md-12">
+          <input type="number" id="expense_id" value="{{ expense_id }}" hidden>
+          <input class="border border-success border-5" value="{{ title }}" maxlength=12 type="text" id="titleInput" style="font-size: 25px; width: 90%; height: 50px;" >
+        </div>
+      </div>
+    </div>
+    <div class="container text-center">
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <h2><i class="fa-solid fa-users"></i>&nbsp;割り勘要員</h2>
+        </div>
+      </div>
+      <div class="row mt-1">
+        {% for user in users %}
+            <div class="col-4">
+                <input type="checkbox" class="btn-check" id="{{ user.id }}" autocomplete="off" value="{{ user.id }}" {% if user.id in user_ids_with_burden %}checked{% endif %}>
+                <label style="width:100%;" class="btn btn-outline-primary mt-1" for={{ user.id }}>{{ user.username }}</label>
+            </div>
+        {% endfor %}
+    </div>
+      
+      </div>
+    </div>
+  </form>
+
+    <!-- 登録エラーメッセージ -->
+    <div class="container text-center mt-3">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-danger" id="errorMessageTitle" style="display: none;font-size:14px;">エラー:経費タイトルは入力必須です。</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-danger" id="errorMessageCheckbox" style="display: none;font-size:14px;">エラー:割り勘要員は2人以上選択して下さい。</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-danger" id="errorMessageServer" style="display: none; font-size: 14px;"></div>
+        </div>
+    </div>
+    </div>  
+
+    <div class="container text-center">
+      <div class="row">
+        <div class="col-md-12 mt-2">
+          <button class="btn btn-success" id="registerButton" style="width: 90%;">保存</button>
+        </div>
+        <div class="col-md-12 mt-1 mb-2">
+          <a class="btn btn-secondary" href="{% url 'top' %}" style="width: 90%;">戻る</a>
+        </div>
+        {% if expense_id %}
+        <!-- 更新時のみ削除ボタンを表示 -->
+        <div class="col-md-12 mt-5 mb-2">
+          <button class="btn btn-danger" id="deleteButton" style="width: 90%;">削除</button>
+        </div>
+      {% endif %}
+      </div>
+    </div>
+
+  <!-- 登録確認モーダル -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">登録しますか？</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+          <button type="button" class="btn btn-primary" id="confirmRegister">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 登録成功モーダル -->
+  <div class="modal fade" id="registrationSuccessModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">登録が成功しました。</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-footer">
+          <!-- モーダルの「閉じる」ボタンがクリックされた時にトップページに遷移 -->
+          <script>
+            var closeButton = document.querySelector('#registrationSuccessModal .btn-close');
+            closeButton.addEventListener('click', function () {
+              window.location.href = "{% url 'top' %}";
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 削除確認モーダル -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">削除してもよろしいでしょうか？<br>(明細データも削除されます)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="confirmDelete">削除</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>       
+      </div>
+    </div>
+  </div>
+</div>
+
+ <!-- 削除成功モーダル -->
+ <div class="modal fade" id="deleteSuccessModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">削除が成功しました。</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-footer">
+        <!-- モーダルの「閉じる」ボタンがクリックされた時にトップページに遷移 -->
+        <script>
+          var closeButton = document.querySelector('#deleteSuccessModal .btn-close');
+          closeButton.addEventListener('click', function () {
+            window.location.href = "{% url 'top' %}";
+          });
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script src="{% static 'js/expense_registration.js' %}"></script>
+
+{% endblock %}

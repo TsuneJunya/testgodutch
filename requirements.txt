@@ -1,0 +1,29 @@
+# asgiref==3.7.2
+# Brotli==1.1.0
+# dj-database-url==2.1.0
+# dj-static==0.0.6
+# Django==4.1.2
+# django-environ==0.11.2
+# gunicorn==21.2.0
+# packaging==24.0
+# psycopg2-binary==2.9.9
+# python-decouple==3.8
+# sqlparse==0.4.4
+# static3==0.7.0
+# typing_extensions==4.10.0
+# whitenoise==6.6.0
+
+# https://qiita.com/kkk777/items/91a00e431d3e1d72d51e
+asgiref==3.5.2
+dj-database-url==1.0.0
+dj-static==0.0.6
+Django==4.1.2
+django-environ==0.9.0
+django-model-utils==4.2.0
+gunicorn==20.1.0
+psycopg2-binary==2.9.5
+python-decouple==3.6
+python-dotenv==0.21.0
+sqlparse==0.4.3
+static3==0.7.0
+whitenoise==6.2.0

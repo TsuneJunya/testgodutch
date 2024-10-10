@@ -1,0 +1,99 @@
+<!-- expense_detail_list.html -->
+
+{% extends 'goDutchApp/base.html' %}
+{% block content %}
+{% load humanize %}
+  <!-- CSSの読み込み -->
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/expense_detail_list_style.css' %}">
+
+<div class="container">
+  <div class="title-container text-center d-flex align-items-center justify-content-center flex-column">
+    <h2 class="title" style="font-family: 'Hiragino Sans','ヒラギノ角ゴシック';margin-bottom:0;">=&nbsp;{{ title }}&nbsp;=</h2>
+    <small style="font-family: 'Hiragino Sans','ヒラギノ角ゴシック';">経費一覧</small>
+  </div>
+
+
+  <div class="text-center">
+    <a class="mt-1 btn btn-primary btn-lg" href="{% url 'expense_detail_create' expense_id %}" style="width:45%;font-weight:bold;padding:2px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square-dotted" viewBox="0 0 18 18" style="margin-bottom:2px;">
+      <path d="M2.5 0q-.25 0-.487.048l.194.98A1.5 1.5 0 0 1 2.5 1h.458V0zm2.292 0h-.917v1h.917zm1.833 0h-.917v1h.917zm1.833 0h-.916v1h.916zm1.834 0h-.917v1h.917zm1.833 0h-.917v1h.917zM13.5 0h-.458v1h.458q.151 0 .293.029l.194-.981A2.5 2.5 0 0 0 13.5 0m2.079 1.11a2.5 2.5 0 0 0-.69-.689l-.556.831q.248.167.415.415l.83-.556zM1.11.421a2.5 2.5 0 0 0-.689.69l.831.556c.11-.164.251-.305.415-.415zM16 2.5q0-.25-.048-.487l-.98.194q.027.141.028.293v.458h1zM.048 2.013A2.5 2.5 0 0 0 0 2.5v.458h1V2.5q0-.151.029-.293zM0 3.875v.917h1v-.917zm16 .917v-.917h-1v.917zM0 5.708v.917h1v-.917zm16 .917v-.917h-1v.917zM0 7.542v.916h1v-.916zm15 .916h1v-.916h-1zM0 9.375v.917h1v-.917zm16 .917v-.917h-1v.917zm-16 .916v.917h1v-.917zm16 .917v-.917h-1v.917zm-16 .917v.458q0 .25.048.487l.98-.194A1.5 1.5 0 0 1 1 13.5v-.458zm16 .458v-.458h-1v.458q0 .151-.029.293l.981.194Q16 13.75 16 13.5M.421 14.89c.183.272.417.506.69.689l.556-.831a1.5 1.5 0 0 1-.415-.415zm14.469.689c.272-.183.506-.417.689-.69l-.831-.556c-.11.164-.251.305-.415.415l.556.83zm-12.877.373Q2.25 16 2.5 16h.458v-1H2.5q-.151 0-.293-.029zM13.5 16q.25 0 .487-.048l-.194-.98A1.5 1.5 0 0 1 13.5 15h-.458v1zm-9.625 0h.917v-1h-.917zm1.833 0h.917v-1h-.917zm1.834-1v1h.916v-1zm1.833 1h.917v-1h-.917zm1.833 0h.917v-1h-.917zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"/>
+    </svg>&nbsp;経費追加</a>
+    <a href="{% url 'top' %}" class="btn btn-primary btn-back  btn-lg mt-1" style="width: 45%;font-weight:bold;margin-bottom:2px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-square" viewBox="0 0 16 16" style="margin-bottom:2px;">
+      <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+    </svg>&nbsp;戻る</a>
+  </div>
+
+<!-- アコーディオンのトリガー -->
+<div class="accordion mt-3 mx-auto" id="participantAccordion" style="width:90%;">
+    <div class="accordion-item">
+        <h2 class="accordion-header text-center" id="participantHeading">
+            <button class="accordion-button" style="padding:2px;" type="button" data-bs-toggle="collapse" data-bs-target="#participantCollapse" aria-expanded="false" aria-controls="participantCollapse">
+                割り勘要員
+            </button>
+        </h2>
+        <div id="participantCollapse" class="accordion-collapse collapse" aria-labelledby="participantHeading">
+            <div class="accordion-body text-center" style="max-height: 200px; overflow-y: auto; display: flex; flex-wrap: wrap;">
+                <!-- 参加者氏名を2列に表示するコンテンツ -->
+                {% for user_id, burden_username in burden_usernames.items %}
+                    <div style="flex-basis: 50%; padding: 5px;">
+                        {{ burden_username }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!-- 総支出合計の表示 -->
+  <div class="text-center mt-2">
+    <label class="total-expense" style="width:90%;text-align:left;">総支出合計:{{ total_payment_amount|floatformat:"0"|intcomma }}（1人当たり:約{{ average_payment_amount|floatformat:"0"|intcomma }}）</label>
+  </div>
+
+  <!-- ここに経費詳細一覧を表示 -->   
+  <table class="table table-bordered table-striped text-center table-sm" style="width: 90%; margin: auto; font-size: 1.2em;">
+    <thead>
+      <tr>
+        <th>編集</th>
+        <th>支払者</th>
+        <th>支払金額</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for expense_detail in expense_details %}
+        <tr>
+          <!-- 支払者と支払金額をリンクにする -->
+          <td><a href="{% url 'expense_detail_create' expense_id=expense_detail.expense_id detail_id=expense_detail.id %}"><img src="{% static 'svg/pen-svgrepo-com.svg' %}"></a></td>
+          <td>{{ expense_detail.payer }}</td>
+          <td class="text-end">{{ expense_detail.payment_amount|floatformat:"0"|intcomma }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>        
+  </table>
+
+  <div class="text-center">
+    <a href="{% url 'expense_regist' expense_id=expense_id %}" class="btn btn-warning btn-edit mt-3" style="width: 90%;font-weight:bold;padding:2px;"><img src="{% static 'svg/pen-svgrepo-com.svg' %}">
+      <i class="fa-regular fa-pen-to-square"></i>タイトル&nbsp;／&nbsp;<i class="fa-solid fa-users"></i>割り勘要員</a>
+  </div>
+
+  <!-- ここに経費詳細一覧を表示 -->   
+  <table class="table table-bordered table-striped text-center table-sm" style="width: 90%; margin: 20px auto; font-size: 1.2em;">
+    <thead>
+      <tr>
+        <th>精算方法</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for paymentTxt in paymentsTxt %}
+        <tr style="text-align:left;">
+          <td>{{ paymentTxt }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>        
+  </table>
+
+</div>
+
+<!-- JavaScript ファイルを外部から読み込む -->
+<script src="{% static 'js/expense_detail_list.js' %}"></script>
+
+{% endblock %}

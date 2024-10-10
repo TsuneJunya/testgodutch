@@ -1,0 +1,42 @@
+<!-- top.html -->
+
+{% extends 'goDutchApp/base.html' %}
+
+{% block content %}
+  <!-- CSSの読み込み -->
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/top.css' %}">
+
+  <div class="container">
+    <div class="mt-1"> 
+    <strong class="font-weight-bold" style="font-size:12px;">ようこそ、{{ username }}さん！</strong>
+  </div>
+    <div class="top-head d-flex justify-content-end">  
+      <a href="#" class="btn btn-color" style="padding:0;margin-right:20px;" onclick="event.preventDefault(); document.getElementById('expense_regist_form').submit();"><i class="fa-solid fa-2x fa-circle-plus"></i></a>
+      <form id="expense_regist_form" action="{% url 'expense_regist' %}" method="post" style="display: none;">
+          {% csrf_token %}
+      </form>
+  </div>
+
+      <div class="list-content"> 
+        <table id="expenseTable" class="table"  style="padding-top:0;">
+          <thead>
+              <tr>
+                  <th>タイトル</th>
+                  <th>作成日</th>
+              </tr>
+          </thead>
+          <tbody>
+              <!-- データはここに挿入されます -->
+              {% for expense in expenses %}
+                  <tr>
+                    <td><a href="{% url 'expense_detail_list' expense.expense_id %}" style="text-decoration: none;">{{ expense.title }}</a></td>
+                    <td>{{ expense.create_on|date:"Y/m/d" }}</td>
+                      <!-- 他のセルにもデータを挿入 -->
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+      </div>      
+  </div>
+{% endblock %}
